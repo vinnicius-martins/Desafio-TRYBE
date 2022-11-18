@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  frontend:
+    container_name: frontend-container-vinnicius
+    image: frontend-vinnicius
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  backend:
+    container_name: backend-container-vinnicius
+    image: backend-vinnicius
+    build:
+      context: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      - EXTERNAL_PORT=3001
+      - PGUSER=root
+      - PGPASSWORD=root
+      - PGDATABASE=DOCKER_DATABASE
+      - PGHOST=DOCKER_DATABASE_SERVICE
+      - DATABASE_URL=postgresql://root:root@0.0.0.0:5432/DOCKER_DATABASE?schema=public
+    depends_on:
+      - db
+  db:
+    container_name: db-vinnicius
+    image: "postgres:12"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=DOCKER_DATABASE
+    volumes:
+      - data:/var/lib/postgresql/data
+volumes:
+  data: {}
